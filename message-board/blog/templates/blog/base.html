@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blog</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <style>
+        h1 a {
+            color: #FFB799;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+  <header>
+    <h1><a href="{% url 'blog_list' %}">Django blog</a></h1>
+  </header>
+  <div>
+    {% block content %}
+    <p>No content passed</p>
+    {% endblock content %}
+  </div>
+</body>
+</html>
