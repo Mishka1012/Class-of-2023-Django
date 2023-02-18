@@ -34,15 +34,44 @@ class BlogTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_blog_listview(self):
-        responce = self.client.get(reverse("blog_list"))
-        self.assertEqual(responce.status_code, 200)
-        self.assertContains(responce, "This is a body content for this blog post.")
-        self.assertTemplateUsed(responce, "blog_list.html")
+        response = self.client.get(reverse("blog_list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "This is a body content for this blog post.")
+        self.assertTemplateUsed(response, "blog_list.html")
 
     def test_blog_detailview(self):
-        responce = self.client.get(reverse("post_detail", kwargs={'pk': self.post.pk}))
-        self.assertEqual(responce.status_code, 200)
-        self.assertContains(responce, "Blog Title")
-        self.assertTemplateUsed(responce, "post-detail.html")
+        response = self.client.get(reverse("post_detail", kwargs={'pk': self.post.pk}))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Blog Title")
+        self.assertTemplateUsed(response, "post-detail.html")
         no_response = self.client.get("/post/0")
         self.assertEqual(no_response.status_code, 404)
+
+    def test_post_createview(self):
+        response = self.client.post(
+            reverse("post_new"),
+            {
+                "title": "New Title",
+                "body": "New text",
+                "author": self.user.id
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Post.objects.last().title, "New Title")
+        self.assertEqual(Post.objects.last().body, "New text")
+
+    def test_post_updateview(self):
+        response = self.client.post(
+            reverse("post_edit", args="1"),
+            {
+                "title": "Updated Title",
+                "body": "Updated text",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Post.objects.last().title, "Updated Title")
+        self.assertEqual(Post.objects.last().body, "Updated text")
+
+    def test_post_deleteview(self):
+        response = self.client.post(reverse("post_delete", args="1"))
+        self.assertEqual(response.status_code, 302)
