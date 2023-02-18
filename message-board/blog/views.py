@@ -5,6 +5,13 @@ from .models import Post
 
 # Create your views here.
 class BlogListView(ListView):
+    """
+    Blog list view
+    Home page for blog section of django message-board site.
+
+    Retuns:
+    BlogList view as ListView
+    """
     model = Post
     template_name = "blog_list.html"
 
