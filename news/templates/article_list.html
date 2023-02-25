@@ -13,13 +13,14 @@
 <!--    <h5 class="card-title">Special title treatment</h5>-->
 <!--    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>-->
 <!--    <a href="#" class="btn btn-primary">Go somewhere</a>-->
-    {{ article.body }}
+    <p>{{ article.body }}</p>
+    {% if user.is_staff %}
+      <a href="{% url 'article_edit' article.pk %}">Edit</a> | <a href="{% url 'article_delete' article.pk %}">Delete</a>
+    {% endif %}
   </div>
-  {% if user.is_staff %}
   <div class="card-footer text-muted">
-    <a href="{% url 'article_edit' article.pk %}">Edit</a> | <a href="{% url 'article_delete' article.pk %}">Delete</a>
+    This post has {{ article.comment_set.all.count }} comments.
   </div>
-  {% endif %}
 </div>
 {% endfor %}
 {% endblock content %}
