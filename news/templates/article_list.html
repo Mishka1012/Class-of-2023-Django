@@ -7,7 +7,7 @@
 <div class="card" xmlns="http://www.w3.org/1999/html" style="margin: 1vh">
   <div class="card-header">
     <span class="font-weight-bold">{{ article.title }}</span> &middot;
-    <span class="text-muted">by {{ article.author }} | {{ article.date }}</span>
+    <span class="text-muted">by {% if user == article.author %}YOU {% else %}{{ article.author }} {% endif %}| {{ article.date }} | <a href="{% url 'article_detail' article.pk %}">View</a></span>
   </div>
   <div class="card-body">
 <!--    <h5 class="card-title">Special title treatment</h5>-->
@@ -15,9 +15,11 @@
 <!--    <a href="#" class="btn btn-primary">Go somewhere</a>-->
     {{ article.body }}
   </div>
+  {% if user.is_staff %}
   <div class="card-footer text-muted">
-    <a href="#">Edit</a> | <a href="#">Delete</a>
+    <a href="{% url 'article_edit' article.pk %}">Edit</a> | <a href="{% url 'article_delete' article.pk %}">Delete</a>
   </div>
+  {% endif %}
 </div>
 {% endfor %}
 {% endblock content %}
