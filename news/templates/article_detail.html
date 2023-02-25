@@ -7,6 +7,11 @@
 <div class="article-entry">
   <h2>{{ object.title }}</h2>
   <p>by {{ object.author }} | {{ object.date }}</p>
+  {% if article.image %}
+  <img src="{{ article.image.url }}" width="20%">
+  {% else %}
+  <img src="/media/images/placeholder.jpg" width="20%">
+  {% endif %}
   <p>{{ object.body }}</p>
 </div>
 

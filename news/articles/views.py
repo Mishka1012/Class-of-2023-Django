@@ -29,6 +29,7 @@ class ArticleCreateView(LoginRequiredMixin, CreateView):
     model = Article
     template_name = "article_new.html"
     fields = (
+        "image",
         "title",
         "body",
     )
@@ -60,6 +61,7 @@ class ArticleDetailView(View):
 class ArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Article
     fields = (
+        "image",
         "title",
         "body",
     )
