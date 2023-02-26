@@ -18,7 +18,13 @@
 <hr>
 <h4>Comments</h4>
 {% for comment in article.comment_set.all %}
-  <p>{{ comment.author }} &middot; {{ comment }}</p>
+  <p>
+    {% if comment.author.customerphoto_set.last %}
+    <img src="{{ comment.author.customerphoto_set.last.photo.url }}" alt="commenter photo" style="border-radius: 15px;" height="30px">
+    {% else %}
+    <img src="/users/placeholder.jpg" alt="commenter photo" style="border-radius: 15px;" height="30px">
+    {% endif %}
+    <a href="{% url 'profile' comment.author.pk %}">{{ comment.author }}</a> &middot; {{ comment }}</p>
 {% endfor %}
 <hr>
 {% if user.is_authenticated %}

@@ -8,22 +8,6 @@ from django.urls import reverse_lazy, reverse
 from .models import Article
 from .forms import CommentForm
 
-class CommentPost(SingleObjectMixin, FormView):
-    model = Article
-    form_class = CommentForm
-    template_name = "article_detail.html"
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        return super().post(request, *args, **kwargs)
-    def form_valid(self, form):
-        comment = form.save(commit=False)
-        comment.article = self.object
-        comment.author = self.request.user
-        comment.save()
-        return super().form_valid(form)
-    def get_success_url(self):
-        article = self.get_object()
-        return reverse("article_detail", kwargs={"pk": article.pk})
 
 class ArticleCreateView(LoginRequiredMixin, CreateView):
     model = Article
@@ -49,6 +33,22 @@ class CommentGet(DetailView):
         context['form'] = CommentForm()
         return context
 
+class CommentPost(SingleObjectMixin, FormView):
+    model = Article
+    form_class = CommentForm
+    template_name = "article_detail.html"
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().post(request, *args, **kwargs)
+    def form_valid(self, form):
+        comment = form.save(commit=False)
+        comment.article = self.object
+        comment.author = self.request.user
+        comment.save()
+        return super().form_valid(form)
+    def get_success_url(self):
+        article = self.get_object()
+        return reverse("article_detail", kwargs={"pk": article.pk})
 class ArticleDetailView(View):
     def get(self, request, *args, **kwargs):
         view = CommentGet.as_view()

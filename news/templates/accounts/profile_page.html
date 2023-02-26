@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Profile Page{% endblock title %}
+
+{% block content %}
+<h2>{{ object.username }}</h2>
+<div>
+{% if object.customerphoto_set.last %}
+<img src="{{ object.customerphoto_set.last.photo.url }}" alt="commenter photo" style="border-radius: 15px;" height="200">
+{% else %}
+<img src="/users/placeholder.jpg" alt="commenter photo" style="border-radius: 15px;" height="200">
+{% endif %}
+</div>
+
+{% for photo in object.customerphoto_set.all %}
+<img src="{{ photo.photo.url }}" alt="commenter photo" style="border-radius: 15px;" height="200">
+{% endfor %}
+
+{% if user == object %}
+<h4>Add a photo</h4>
+<form action="" method="post">
+  {% csrf_token %}
+  {{ form|crispy }}
+  <button class="btn btn-success ml-2" type="submit">+</button>
+</form>
+{% endif %}
+
+{% endblock content %}
