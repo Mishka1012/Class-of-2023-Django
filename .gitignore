@@ -4,3 +4,4 @@ db.sqlite3
 __pycache__
 .env
 news/mediafiles/images/*
+news/mediafiles/users/*
