@@ -12,14 +12,35 @@
 <img src="/users/placeholder.jpg" alt="commenter photo" style="border-radius: 15px;" height="200">
 {% endif %}
 </div>
-
-{% for photo in object.customerphoto_set.all %}
-<img src="{{ photo.photo.url }}" alt="commenter photo" style="border-radius: 15px;" height="200">
-{% endfor %}
-
+{% if object.customerphoto_set.all %}
+<div id="myCarousel" class="carousel slide">
+  <div class="carousel-inner">
+      {% for photo in object.customerphoto_set.all %}
+        {% if photo.pk == 1 %}
+        <div class="carousel-item active">
+        {% else %}
+        <div class="carousel-item">
+        {% endif %}
+          <img src="{{ photo.photo.url }}" class="d-block w-100" alt="commenter photo">
+        </div>
+      {% endfor %}
+<!--    <div class="carousel-item active">-->
+<!--      <img src="..." class="d-block w-100" alt="...">-->
+<!--    </div>-->
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+{% endif %}
 {% if user == object %}
 <h4>Add a photo</h4>
-<form action="" method="post">
+<form action="" method="post" enctype="multipart/form-data">
   {% csrf_token %}
   {{ form|crispy }}
   <button class="btn btn-success ml-2" type="submit">+</button>
@@ -27,3 +48,14 @@
 {% endif %}
 
 {% endblock content %}
+
+  {% block footscripts %}
+  <script type="text/javascript">
+    const myCarouselElement = document.querySelector('#myCarousel')
+
+    const carousel = new bootstrap.Carousel(myCarouselElement, {
+      interval: 2000,
+      touch: false
+    })
+  </script>
+{% endblock footscripts %}

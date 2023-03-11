@@ -6,7 +6,7 @@ from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.urls import reverse_lazy, reverse
 
 from .models import Article
-from .forms import CommentForm
+from .forms import CommentForm, RatingForm
 
 
 class ArticleCreateView(LoginRequiredMixin, CreateView):
@@ -30,7 +30,8 @@ class CommentGet(DetailView):
     template_name = "article_detail.html"
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = CommentForm()
+        context['comment_form'] = CommentForm()
+        context['rating_form'] = RatingForm()
         return context
 
 class CommentPost(SingleObjectMixin, FormView):
@@ -49,13 +50,33 @@ class CommentPost(SingleObjectMixin, FormView):
     def get_success_url(self):
         article = self.get_object()
         return reverse("article_detail", kwargs={"pk": article.pk})
+
+class RatingPost(SingleObjectMixin, FormView):
+    model = Article
+    form_class = RatingForm
+    template_name = "article_detail.html"
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().post(request, *args, **kwargs)
+    def form_valid(self, form):
+        rating = form.save(commit=False)
+        rating.article = self.object
+        rating.save()
+        return super().form_valid(form)
+    def get_success_url(self):
+        article = self.get_object()
+        return reverse("article_detail", kwargs={"pk": article.pk})
+
 class ArticleDetailView(View):
     def get(self, request, *args, **kwargs):
         view = CommentGet.as_view()
         return view(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        view = CommentPost.as_view()
+        if 'rating' in request.POST:
+            view = RatingPost.as_view()
+        elif 'comment' in request.POST:
+            view = CommentPost.as_view()
         return view(request, *args, **kwargs)
 
 class ArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):

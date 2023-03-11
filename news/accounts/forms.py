@@ -15,5 +15,4 @@ class CustomUserChangeForm(UserChangeForm):
 class CustomerPhotoForm(forms.ModelForm):
     class Meta:
         model = CustomerPhoto
-        fields = ( "photo", "user", )
-        widgets = {'user': forms.HiddenInput()}
+        fields = ( "photo", )

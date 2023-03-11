@@ -8,6 +8,11 @@
   <div class="card-header">
     <span class="font-weight-bold">{{ article.title }}</span> &middot;
     <span class="text-muted">by {% if user == article.author %}YOU {% else %}{{ article.author }} {% endif %}| {{ article.date }} | <a href="{% url 'article_detail' article.pk %}">View</a></span>
+    {% if article.average_rating %}
+    <div class="progress" role="progressbar" aria-label="Warning example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+      <div class="progress-bar bg-warning" style="width: {{ article.average_rating }}%"></div>
+    </div>
+    {% endif %}
   </div>
   <div class="card-body">
 <!--    <h5 class="card-title">Special title treatment</h5>-->

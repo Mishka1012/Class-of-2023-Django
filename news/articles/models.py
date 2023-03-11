@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.urls import reverse
+from django.db.models import Avg
 
 # Create your models here.
 class Article(models.Model):
@@ -15,7 +16,15 @@ class Article(models.Model):
 
     def get_absolute_url(self):
         return reverse("article_detail", kwargs={"pk": self.pk})
+    def average_rating(self):
+        avg_rating = 0
+        if len(Star.objects.filter(article=self)):
+            avg_rating = Star.objects.filter(article=self).aggregate(avg_rating=Avg('rating'))['avg_rating'] / 5 * 100
+        return avg_rating
 
+class Star(models.Model):
+    rating = models.IntegerField()
+    article = models.ForeignKey(Article, on_delete=models.CASCADE)
 class Comment(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,)
     article = models.ForeignKey(Article, on_delete=models.CASCADE,)

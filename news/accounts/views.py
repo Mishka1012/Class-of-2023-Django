@@ -34,6 +34,7 @@ class ImagePost(SingleObjectMixin, FormView):
         return super().post(request, *args, **kwargs)
     def form_valid(self, form):
         photo = form.save(commit=False)
+        photo.user = self.object
         photo.save()
         return super().form_valid(form)
     def get_success_url(self):
