@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block title %}{{ object.title }}{% endblock title %}
 
@@ -16,70 +17,13 @@
 </div>
 
 <hr>
-{% if user.is_authenticated %}
 <h4>Rate this article:</h4>
-<style>
-  /* Hide the radio buttons */
-  .form-check-input {
-    display: none;
-  }
-
-  /* Style the star labels */
-  .form-check-label {
-    display: inline-block;
-    position: relative;
-    padding-left: 5px;
-    cursor: pointer;
-    font-size: 24px;
-  }
-
-  /* Add the star icon */
-  .form-check-label::before {
-    content: "\2606";
-    position: absolute;
-    top: 0;
-    left: 0;
-    font-size: 24px;
-  }
-
-  /* Change the icon to a filled star when selected */
-  .form-check-input:checked ~ .form-check-label::before {
-    content: "\2605";
-    color: gold;
-  }
-
-  /* Change the icon to an outlined star when not selected */
-  .form-check-input:not(:checked) ~ .form-check-label::before {
-    content: "\2606";
-    color: gray;
-  }
-
-  /* Change the icon to a filled star when hovered */
-  .form-check-input:not(:checked):hover ~ .form-check-label::before {
-    content: "\2605";
-    color: gold;
-  }
-
-  /* Make all previous stars light up when one is selected */
-  .form-check-input:checked ~ .form-check-label::before,
-  .form-check-input:checked ~ .form-check-label::before ~ .form-check-label::before {
-    color: gold;
-  }
-
-  #div_id_rating {
-    display: flex;
-  }
-
-  #div_id_rating div {
-    display: flex;
-  }
-</style>
+<link rel="stylesheet" href="{% static 'articles/css/rating.css' %}"/>
 <form action="" method="post">
   {% csrf_token %}
   {{ rating_form|crispy }}
   <button class="btn btn-success ml-2" type="submit">Rate</button>
 </form>
-{% endif %}
 <h4>Comments</h4>
 {% for comment in article.comment_set.all %}
   <p>
