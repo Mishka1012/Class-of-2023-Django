@@ -10,6 +10,7 @@ crispy-bootstrap5 = "*"
 environs = "*"
 pillow = "*"
 django-allauth = "*"
+django-filter = "*"
 
 [dev-packages]
 

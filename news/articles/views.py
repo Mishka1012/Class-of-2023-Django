@@ -7,6 +7,7 @@ from django.urls import reverse_lazy, reverse
 
 from .models import Article
 from .forms import CommentForm, RatingForm
+from .filters import ArticleFilter
 
 
 class ArticleCreateView(LoginRequiredMixin, CreateView):
@@ -24,6 +25,19 @@ class ArticleCreateView(LoginRequiredMixin, CreateView):
 class ArticleListView(ListView):
     model = Article
     template_name = 'article_list.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        articles = Article.objects
+        my_filter = ArticleFilter(self.request.GET, queryset=articles)
+        context['filter'] = my_filter
+        if self.request.GET:
+            articles = my_filter.qs
+            context["article_list"] = articles
+        first_article_date = articles.first().date
+        last_article_date = articles.last().date
+        context["start_date"] = 10000 * first_article_date.year + 100 * first_article_date.month + first_article_date.day
+        context["end_date"] = 10000 * last_article_date.year + 100 * last_article_date.month + last_article_date.day
+        return context
 
 class CommentGet(DetailView):
     model = Article

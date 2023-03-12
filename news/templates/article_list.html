@@ -1,31 +1,59 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 
 {% block title %}Articles List{% endblock title %}
 
 {% block content %}
-{% for article in article_list %}
-<div class="card" xmlns="http://www.w3.org/1999/html" style="margin: 1vh">
-  <div class="card-header">
-    <span class="font-weight-bold">{{ article.title }}</span> &middot;
-    <span class="text-muted">by {% if user == article.author %}YOU {% else %}{{ article.author }} {% endif %}| {{ article.date }} | <a href="{% url 'article_detail' article.pk %}">View</a></span>
-    {% if article.average_rating %}
-    <div class="progress" role="progressbar" aria-label="Warning example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
-      <div class="progress-bar bg-warning" style="width: {{ article.average_rating }}%"></div>
+<div class="row">
+    <div class="col-md-3">
+      <form method="get">
+<!--        {{ filter.form|crispy }}-->
+          <div id="search_div" class="mb-3">
+              <label for="id_search" class="form-label">
+                Search
+            </label>
+              {{ filter.form.search }}
+          </div>
+            <div id="div_id_author" class="mb-3"> <label for="id_author" class="form-label">
+                Author
+            </label> {{ filter.form.author }}
+            </div>
+          <div id="div_id_start_date" class="mb-3"> <label for="id_start_date" class="form-label">
+                Date is greater than or equal to
+            </label> <input type="date" name="start_date" value="3/1/2023" class="dateinput form-control" id="id_start_date"> </div> <div id="div_id_end_date" class="mb-3">
+          <label for="id_end_date" class="form-label">
+                Date is less than or equal to
+          </label> <input type="date" name="end_date" value="" class="dateinput form-control" id="id_end_date"> </div>
+
+        <input type="submit" class="btn btn-primary" value="Search">
+      </form>
     </div>
-    {% endif %}
-  </div>
-  <div class="card-body">
-<!--    <h5 class="card-title">Special title treatment</h5>-->
-<!--    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>-->
-<!--    <a href="#" class="btn btn-primary">Go somewhere</a>-->
-    <p>{{ article.body }}</p>
-    {% if user.is_staff %}
-      <a href="{% url 'article_edit' article.pk %}">Edit</a> | <a href="{% url 'article_delete' article.pk %}">Delete</a>
-    {% endif %}
-  </div>
-  <div class="card-footer text-muted">
-    This post has {{ article.comment_set.all.count }} comments.
-  </div>
+    <div class="col-md-9">
+      {% for article in article_list %}
+      <div class="card" xmlns="http://www.w3.org/1999/html" style="margin: 1vh">
+        <div class="card-header">
+          <span class="font-weight-bold">{{ article.title }}</span> &middot;
+          <span class="text-muted">by {% if user == article.author %}YOU {% else %}{{ article.author }} {% endif %}| {{ article.date }} | <a href="{% url 'article_detail' article.pk %}">View</a></span>
+          {% if article.average_rating %}
+          <div class="progress" role="progressbar" aria-label="Warning example" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar bg-warning" style="width: {{ article.average_rating }}%"></div>
+          </div>
+          {% endif %}
+        </div>
+        <div class="card-body">
+      <!--    <h5 class="card-title">Special title treatment</h5>-->
+      <!--    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>-->
+      <!--    <a href="#" class="btn btn-primary">Go somewhere</a>-->
+          <p>{{ article.body }}</p>
+          {% if user.is_staff %}
+            <a href="{% url 'article_edit' article.pk %}">Edit</a> | <a href="{% url 'article_delete' article.pk %}">Delete</a>
+          {% endif %}
+        </div>
+        <div class="card-footer text-muted">
+          This post has {{ article.comment_set.all.count }} comments.
+        </div>
+      </div>
+      {% endfor %}
+    </div>
 </div>
-{% endfor %}
 {% endblock content %}

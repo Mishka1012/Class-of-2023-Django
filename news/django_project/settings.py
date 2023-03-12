@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     # crispies
     "crispy_forms",
     "crispy_bootstrap5",
+    # filters
+    "django_filters",
     # my apps
     'accounts',
     'pages',
