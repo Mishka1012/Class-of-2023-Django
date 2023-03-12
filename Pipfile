@@ -11,6 +11,8 @@ environs = "*"
 pillow = "*"
 django-allauth = "*"
 django-filter = "*"
+psycopg2 = "*"
+loremipsum = "*"
 
 [dev-packages]
 

@@ -4,6 +4,7 @@ from django.views.generic.detail import SingleObjectMixin
 from django.views import View
 from django.views.generic.edit import UpdateView, DeleteView, CreateView
 from django.urls import reverse_lazy, reverse
+import requests
 
 from .models import Article
 from .forms import CommentForm, RatingForm
@@ -17,9 +18,21 @@ class ArticleCreateView(LoginRequiredMixin, CreateView):
         "image",
         "title",
         "body",
+        "address",
     )
     def form_valid(self, form):
         form.instance.author = self.request.user
+        url = "https://nominatim.openstreetmap.org/search"
+        params = {
+            "q": form.instance.address,
+            "format": "json",
+            "polygon": 0,
+            "addressdetails": 0
+        }
+        request = requests.get(url, params)
+        json = request.json()[0]
+        form.instance.lat = float(json["lat"])
+        form.instance.lon = float(json["lon"])
         return super().form_valid(form)
 
 class ArticleListView(ListView):
@@ -33,10 +46,11 @@ class ArticleListView(ListView):
         if self.request.GET:
             articles = my_filter.qs
             context["article_list"] = articles
-        first_article_date = articles.first().date
-        last_article_date = articles.last().date
-        context["start_date"] = 10000 * first_article_date.year + 100 * first_article_date.month + first_article_date.day
-        context["end_date"] = 10000 * last_article_date.year + 100 * last_article_date.month + last_article_date.day
+        if articles.first():
+            first_article_date = articles.first().date
+            last_article_date = articles.last().date
+            context["start_date"] = 10000 * first_article_date.year + 100 * first_article_date.month + first_article_date.day
+            context["end_date"] = 10000 * last_article_date.year + 100 * last_article_date.month + last_article_date.day
         return context
 
 class CommentGet(DetailView):
@@ -99,11 +113,28 @@ class ArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         "image",
         "title",
         "body",
+        "address",
     )
     template_name = "article_edit.html"
     def test_func(self):
         obj = self.get_object()
         return obj.author == self.request.user
+
+    def form_valid(self, form):
+        if self.object.address == form.instance.address:
+            return super().form_valid(form)
+        url = "https://nominatim.openstreetmap.org/search"
+        params = {
+            "q": form.instance.address,
+            "format": "json",
+            "polygon": 0,
+            "addressdetails": 0
+        }
+        request = requests.get(url, params)
+        json = request.json()[0]
+        form.instance.lat = float(json["lat"])
+        form.instance.lon = float(json["lon"])
+        return super().form_valid(form)
 
 class ArticleDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Article

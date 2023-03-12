@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.urls import reverse
 from django.db.models import Avg
+import requests
 
 # Create your models here.
 class Article(models.Model):
@@ -10,6 +11,11 @@ class Article(models.Model):
     body = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,)
+    address = models.CharField(max_length=500, blank=True, null=True)
+    lat = models.FloatField(blank=True, null=True)
+    lon = models.FloatField(blank=True, null=True)
+
+
 
     def __str__(self):
         return self.title
